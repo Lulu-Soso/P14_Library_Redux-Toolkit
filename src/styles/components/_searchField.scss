@@ -1,0 +1,17 @@
+.search {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+
+    input {
+      padding: 0.3rem;
+      width: max-content;
+      min-width: 210px;
+      background-color: #fbfbfb;
+
+      &:hover {
+        background-color: #ffffff;
+      }
+    }
+  }
