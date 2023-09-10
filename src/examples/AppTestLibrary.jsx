@@ -1,11 +1,8 @@
 import React, { useEffect } from "react";
 import axios from "axios";
 import SuperTable from "../lib/components/SuperTable";
-import {
-    setEmployeesData,
-    setError,
-  } from "../feature/employees.slice";
-  import { useDispatch, useSelector } from "react-redux";
+import { setEmployeesData, setError } from "../feature/employees.slice";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 // *** CONSTANTS ***
@@ -22,8 +19,8 @@ const columnsTable = [
 ];
 
 const AppTestLibrary = () => {
-  const customLabelFilter = "Show"
-  const customLabelSearch = "Search"
+  const customLabelFilter = "Show";
+  const customLabelSearch = "Search";
 
   const employeesData = useSelector((state) => state.employees.employeesData);
   const dispatch = useDispatch();
@@ -47,15 +44,21 @@ const AppTestLibrary = () => {
     <div className="app-container">
       <h1>Table Library</h1>
 
-      <SuperTable 
-    //   data = {employeesData}
-    //   customColumnsTable = {columnsTable}
-      showFilterComponent={true}
-      showSearchComponent={true}
-      showEntriesListComponent={true}
-      showPaginationComponent={true}
-      customLabelFilter={customLabelFilter} 
-      customLabelSearch={customLabelSearch} 
+      <SuperTable
+        //   data = {employeesData}
+        //   customColumnsTable = {columnsTable}
+        showFilterComponent={true}
+        showSearchComponent={true}
+        showEntriesListComponent={true}
+        showPaginationComponent={true}
+        customLabelFilter={customLabelFilter}
+        customLabelSearch={customLabelSearch}
+        readComponent={true}
+        editComponent={true}
+        deleteComponent={true}
+        // customHandleRead={customHandleRead}
+        // customHandleEdit={customHandleEdit}
+        // customHandleDelete={customHandleDelete}
       />
 
       <div className="link-employee">

@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from "react";
-import testData from "../../usersData.js"
+import testData from "../../usersData.js";
 import TableHeader from "../components/TableHeader";
 import EmployeeDataRow from "../components/EmployeeDataRow";
 import SearchField from "../components/SearchField";
 import EntriesInfo from "../components/EntriesInfo";
 import Pagination from "./Pagination";
 import FilterEntries from "../components/FilterEntries";
+import EditForm from "../components/EditForm";
 
 // *** CONSTANTS ***
 const columnsTable = [
-  { key: "firstName", label: "First Name"},
-  { key: "lastName", label: "Last Name"},
-  { key: "email", label: "Email"},
-  { key: "numberPhone", label: "Number Phone"},
-  { key: "dateOfBirth", label: "Date of Birth"},
-  { key: "address", label: "Address"},
-  { key: "zipCode", label: "Zip Code"},
-  { key: "", label: ""},
-  { key: "country", label: "Country"},
-]; 
+  { key: "id", label: "id" },
+  { key: "firstName", label: "First Name" },
+  { key: "lastName", label: "Last Name" },
+  { key: "email", label: "Email" },
+  { key: "numberPhone", label: "Number Phone" },
+  { key: "dateOfBirth", label: "Date of Birth" },
+  { key: "address", label: "Address" },
+  { key: "zipCode", label: "Zip Code" },
+  { key: "", label: "" },
+  { key: "country", label: "Country" },
+  { key: "/Options-Actions/", label: "Actions" },
+];
 
 const SuperTable = ({
   data = testData,
@@ -31,6 +34,14 @@ const SuperTable = ({
   showPaginationComponent: showPaginationProp = true,
   customLabelSearch = "Search data",
   customLabelFilter = "Show by Number",
+  readComponent = false,
+  editComponent = false,
+  deleteComponent = false,
+  customHandleRead,
+  customHandleEdit,
+  customHandleDelete,
+  saveEditedItem, 
+  // closeEditForm,
 }) => {
   // *** STATES ***
   const [sortBy, setSortBy] = useState("firstName");
@@ -39,11 +50,52 @@ const SuperTable = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState("");
   const [searchPerformed, setSearchPerformed] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
+  // const [isEditing, setIsEditing] = useState(false);
 
   const [localShowEntriesListComponent, setLocalShowEntriesListComponent] =
     useState(showEntriesListProp);
   const [localShowPaginationComponent, setLocalShowPaginationComponent] =
     useState(showPaginationProp);
+
+
+    ///////
+    const handleRead = (item) => {
+      if (customHandleRead) {
+        customHandleDelete(item.id);
+      } else {
+        console.log(`Reading item with ID: ${item.id}`);
+      }
+    };
+
+    const handleEdit = (item) => {
+      if (customHandleEdit) {
+        customHandleEdit(item.id);
+      } else {
+        console.log("Editing item with ID:", item.id);
+        setEditingItem(item.id);
+        // setEditedItem({ ...item });
+      }
+      // setIsEditing(true);
+      // setIsSearchValue(true)
+  
+    };
+
+    const handleDelete = (item) => {
+      if (customHandleDelete) {
+        customHandleDelete(item.id);
+      } else {
+        console.log(`Deleting item with ID: ${item.id}`);
+      }
+    };
+
+    const closeEditForm = () => {
+      setEditingItem(null);
+      // setIsEditing(false); // Réactivez le mode édition lors de la fermeture de la fenêtre modale
+      // setSearchValue("")
+      // setIsSearchValue(null)
+    };
+    ///////
 
   // *** SORTING LOGIC ***
   const toggleSortOrder = () => {
@@ -51,7 +103,15 @@ const SuperTable = ({
   };
 
   const handleColumnClick = (columnName) => {
-    if (sortBy === columnName) {
+    if (columnName === "/Options-Actions/") {
+      // Si nous cliquons sur /Options-Actions/ et que le tri actuel est déjà basé sur l'ID et est en ordre croissant
+      if (sortBy === "/Options-Actions/" && sortOrder === "asc") {
+        setSortOrder("desc");
+      } else {
+        setSortBy("/Options-Actions/");
+        setSortOrder("asc");
+      }
+    } else if (sortBy === columnName) {
       toggleSortOrder();
     } else {
       setSortBy(columnName);
@@ -63,8 +123,16 @@ const SuperTable = ({
   const sortedData = data.slice().sort((a, b) => {
     if (sortBy === null) return 0;
 
-    const aValue = a[sortBy];
-    const bValue = b[sortBy];
+    let aValue, bValue;
+
+    // Si tri par colonne Actions, utiliser un autre critère, par ex. 'createdAt'
+    if (sortBy === "/Options-Actions/") {
+      aValue = a.createdAt;
+      bValue = b.createdAt;
+    } else {
+      aValue = a[sortBy];
+      bValue = b[sortBy];
+    }
 
     // Check for undefined or null values
     if (aValue == null || bValue == null) return 0;
@@ -136,33 +204,17 @@ const SuperTable = ({
   }
 
   // *** SEARCH AND FILTER LOGIC ***
-  // const paginatedData = sortedData
-  //   .filter((employee) => {
-  //     if (!searchValue) return true;
-  //     return (
-  //       employee.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.lastName.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.birthDate.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.startDate.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.street.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.city.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.state.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.zipCode.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.department.toLowerCase().includes(searchValue.toLowerCase())
-  //     );
-  //   })
-  //   .slice((currentPage - 1) * entriesToShow, currentPage * entriesToShow);
-
-  const paginatedData = sortedData.filter((item) => {
-    if (!searchValue) return true;
-    const searchTerms = searchValue.toLowerCase().split(" ");
-    return searchTerms.every((term) =>
-      Object.values(item)
-        .filter((value) => typeof value === "string")
-        .some((value) => value.toLowerCase().includes(term))
-    );
-  })
-  .slice((currentPage - 1) * entriesToShow, currentPage * entriesToShow);
+  const paginatedData = sortedData
+    .filter((item) => {
+      if (!searchValue) return true;
+      const searchTerms = searchValue.toLowerCase().split(" ");
+      return searchTerms.every((term) =>
+        Object.values(item)
+          .filter((value) => typeof value === "string")
+          .some((value) => value.toLowerCase().includes(term))
+      );
+    })
+    .slice((currentPage - 1) * entriesToShow, currentPage * entriesToShow);
 
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
@@ -197,11 +249,15 @@ const SuperTable = ({
     } else {
       setEntriesToShow(10); // Ou toute autre valeur par défaut que vous souhaitez utiliser
     }
-  // }, [employeesData, showAllData]);
+    // }, [employeesData, showAllData]);
   }, [data, showAllData]);
 
   return (
     <div className="app-container">
+      {editingItem && (
+        <EditForm closeEditForm={closeEditForm}/>
+      )}
+
       <div className="employees-header">
         <div className="show-search">
           {showFilterComponent && (
@@ -234,19 +290,27 @@ const SuperTable = ({
                 sortBy={sortBy}
                 sortOrder={sortOrder}
                 // onClick={() => handleColumnClick(column.key)} // Ici, on passe le nom de la colonne
-                onClick={column.key ? () => handleColumnClick(column.key) : undefined} // Pas de gestionnaire de clic si la clé est vide
+                onClick={
+                  column.key ? () => handleColumnClick(column.key) : undefined
+                } // Pas de gestionnaire de clic si la clé est vide
               />
             ))}
           </tr>
         </thead>
         <tbody>
-          {paginatedData.map((employee, index) => (
+          {paginatedData.map((item, index) => (
             <EmployeeDataRow
-              key={employee.id}
-              employee={employee}
+              key={item.id}
+              item={item}
               sortBy={sortBy}
               className={index % 2 === 0 ? "table-row-even" : "table-row-odd"}
               customColumnsTable={customColumnsTable} // Passer le tableau customColumnsTable en tant que prop
+              readComponent={readComponent}
+              editComponent={editComponent}
+              deleteComponent={deleteComponent}
+              handleRead={handleRead}
+              handleEdit={handleEdit}
+              handleDelete={handleDelete}
             />
           ))}
         </tbody>

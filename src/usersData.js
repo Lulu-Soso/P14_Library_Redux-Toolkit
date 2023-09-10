@@ -9,6 +9,7 @@ const usersList = [
     address: "123 Main St",
     zipCode: "12345",
     country: "United States",
+    createdAt: "2022-01-15",
   },
   {
     id: 2,
@@ -20,6 +21,7 @@ const usersList = [
     address: "456 Elm St",
     zipCode: "54321",
     country: "Canada",
+    createdAt: "2022-03-22",
   },
   {
     id: 3,
@@ -31,6 +33,7 @@ const usersList = [
     address: "789 Oak St",
     zipCode: "67890",
     country: "Australia",
+    createdAt: "2021-03-22",
   },
   {
     id: 4,
@@ -42,6 +45,7 @@ const usersList = [
     address: "555 Pine St",
     zipCode: "43210",
     country: "United Kingdom",
+    createdAt: "2022-02-22",
   },
   {
     id: 5,
@@ -53,6 +57,7 @@ const usersList = [
     address: "101 Maple Rd",
     zipCode: "13579",
     country: "New Zealand",
+    createdAt: "2019-03-22",
   },
   {
     id: 6,
@@ -64,6 +69,7 @@ const usersList = [
     address: "222 Birch Ln",
     zipCode: "98765",
     country: "Mexico",
+    createdAt: "2018-03-24",
   },
   {
     id: 7,
@@ -75,6 +81,7 @@ const usersList = [
     address: "777 Cedar Ave",
     zipCode: "24680",
     country: "South Korea",
+    createdAt: "2017-03-22",
   },
   {
     id: 8,
@@ -86,6 +93,7 @@ const usersList = [
     address: "888 Oakwood Dr",
     zipCode: "98765",
     country: "Germany",
+    createdAt: "2022-02-22",
   },
   {
     id: 9,
@@ -97,6 +105,7 @@ const usersList = [
     address: "123 Pine Ave",
     zipCode: "54321",
     country: "Spain",
+    createdAt: "2022-03-12",
   },
   {
     id: 10,
@@ -108,6 +117,7 @@ const usersList = [
     address: "555 Elm St",
     zipCode: "12345",
     country: "France",
+    createdAt: "2022-01-22",
   },
   {
     id: 11,
@@ -119,6 +129,7 @@ const usersList = [
     address: "222 Maple Ave",
     zipCode: "56789",
     country: "Brazil",
+    createdAt: "2021-05-22",
   },
   {
     id: 12,
@@ -130,6 +141,7 @@ const usersList = [
     address: "333 Oak St",
     zipCode: "34567",
     country: "Japan",
+    createdAt: "2020-02-13",
   },
   {
     id: 13,
@@ -141,6 +153,7 @@ const usersList = [
     address: "444 Elm Ave",
     zipCode: "45678",
     country: "Italy",
+    createdAt: "2022-06-22",
   },
   {
     id: 14,
@@ -152,6 +165,7 @@ const usersList = [
     address: "555 Birch St",
     zipCode: "56789",
     country: "Russia",
+    createdAt: "2022-07-22",
   },
   {
     id: 15,
@@ -163,6 +177,7 @@ const usersList = [
     address: "666 Cedar Ave",
     zipCode: "67890",
     country: "China",
+    createdAt: "2022-09-26",
   },
 ];
 

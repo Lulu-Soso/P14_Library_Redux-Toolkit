@@ -36,8 +36,10 @@
       justify-content: center;
       align-items: center;
       padding: 1rem 0;
-      width: max-content;
+      // width: max-content;
     }
+    
+    
 
     .up-down {
       display: flex;
@@ -69,6 +71,39 @@
       color: inherit;
       cursor: default;
     }
+  }
+
+  .actions-th {
+    background-color: #5a6f08;
+    color: #ffffff;
+  }
+
+  .actions-td {
+    display: flex;
+    justify-content: center;
+
+    .options-icons {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+
+      button {
+        border: none;
+        background: transparent;
+  
+        .pen-trash-icons {
+          color: #5a6f08;
+          background: transparent;
+          font-size: 1rem;
+          
+          &:hover {
+            color: #d7ddbb;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+          }
+        }
+      }
+    }    
   }
 
   tbody {
