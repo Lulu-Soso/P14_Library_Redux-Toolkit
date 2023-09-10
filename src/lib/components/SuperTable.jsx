@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import { Link } from "react-router-dom";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  setEmployeesData,
-  setError,
-  setSearch,
-} from "../../feature/employees.slice";
+import testData from "../../usersData.js"
 import TableHeader from "../components/TableHeader";
 import EmployeeDataRow from "../components/EmployeeDataRow";
 import SearchField from "../components/SearchField";
@@ -15,19 +8,21 @@ import Pagination from "./Pagination";
 import FilterEntries from "../components/FilterEntries";
 
 // *** CONSTANTS ***
-const columns = [
-  { key: "firstName", label: "First Name" },
-  { key: "lastName", label: "Last Name" },
-  { key: "birthDate", label: "Date of Birth" },
-  { key: "startDate", label: "Start Date" },
-  { key: "street", label: "Street" },
-  { key: "city", label: "City" },
-  { key: "state", label: "State" },
-  { key: "zipCode", label: "Zip Code" },
-  { key: "department", label: "Department" },
-];
+const columnsTable = [
+  { key: "firstName", label: "First Name"},
+  { key: "lastName", label: "Last Name"},
+  { key: "email", label: "Email"},
+  { key: "numberPhone", label: "Number Phone"},
+  { key: "dateOfBirth", label: "Date of Birth"},
+  { key: "address", label: "Address"},
+  { key: "zipCode", label: "Zip Code"},
+  { key: "", label: ""},
+  { key: "country", label: "Country"},
+]; 
 
 const SuperTable = ({
+  data = testData,
+  customColumnsTable = columnsTable,
   showFilterComponent = false,
   showSearchComponent = false,
   // showEntriesListComponent = false,
@@ -38,32 +33,17 @@ const SuperTable = ({
   customLabelFilter = "Show by Number",
 }) => {
   // *** STATES ***
-  const [showEmptySearch, setShowEmptySearch] = useState(false);
   const [sortBy, setSortBy] = useState("firstName");
   const [sortOrder, setSortOrder] = useState("asc");
   const [entriesToShow, setEntriesToShow] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState("");
-  const [localShowEntriesListComponent, setLocalShowEntriesListComponent] = useState(showEntriesListProp);
-  const [localShowPaginationComponent, setLocalShowPaginationComponent] = useState(showPaginationProp);
+  const [searchPerformed, setSearchPerformed] = useState(false);
 
-  const employeesData = useSelector((state) => state.employees.employeesData);
-  const dispatch = useDispatch();
-
-  // *** DATA FETCHING ***
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/employees");
-        dispatch(setEmployeesData(response.data));
-      } catch (error) {
-        console.error("An error occurred while fetching data:", error);
-        dispatch(setError(error.message));
-      }
-    };
-
-    fetchData();
-  }, [dispatch]);
+  const [localShowEntriesListComponent, setLocalShowEntriesListComponent] =
+    useState(showEntriesListProp);
+  const [localShowPaginationComponent, setLocalShowPaginationComponent] =
+    useState(showPaginationProp);
 
   // *** SORTING LOGIC ***
   const toggleSortOrder = () => {
@@ -79,7 +59,8 @@ const SuperTable = ({
     }
   };
 
-  const sortedData = employeesData.slice().sort((a, b) => {
+  // const sortedData = employeesData.slice().sort((a, b) => {
+  const sortedData = data.slice().sort((a, b) => {
     if (sortBy === null) return 0;
 
     const aValue = a[sortBy];
@@ -155,45 +136,47 @@ const SuperTable = ({
   }
 
   // *** SEARCH AND FILTER LOGIC ***
-  const paginatedData = sortedData
-    .filter((employee) => {
-      if (!searchValue) return true;
-      return (
-        employee.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.lastName.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.birthDate.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.startDate.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.street.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.city.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.state.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.zipCode.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.department.toLowerCase().includes(searchValue.toLowerCase())
-      );
-    })
-    .slice((currentPage - 1) * entriesToShow, currentPage * entriesToShow);
+  // const paginatedData = sortedData
+  //   .filter((employee) => {
+  //     if (!searchValue) return true;
+  //     return (
+  //       employee.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.lastName.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.birthDate.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.startDate.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.street.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.city.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.state.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.zipCode.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.department.toLowerCase().includes(searchValue.toLowerCase())
+  //     );
+  //   })
+  //   .slice((currentPage - 1) * entriesToShow, currentPage * entriesToShow);
+
+  const paginatedData = sortedData.filter((item) => {
+    if (!searchValue) return true;
+    const searchTerms = searchValue.toLowerCase().split(" ");
+    return searchTerms.every((term) =>
+      Object.values(item)
+        .filter((value) => typeof value === "string")
+        .some((value) => value.toLowerCase().includes(term))
+    );
+  })
+  .slice((currentPage - 1) * entriesToShow, currentPage * entriesToShow);
 
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
     setCurrentPage(1); // Reset to page 1 on search
-    dispatch(setSearch(e.target.value));
-
+    setSearchPerformed(true); // Marquez qu'une recherche a été effectuée
+    // dispatch(setSearch(e.target.value));
   };
 
   const handleEntriesChange = (e) => {
     if (!showFilterComponent) return; // Si showFilterComponent est false, ne faites rien
-  
+
     setEntriesToShow(+e.target.value);
     setCurrentPage(1); // Reset to page 1 on entries change
   };
-  
-
-  useEffect(() => {
-    if (paginatedData.length === 0) {
-      setShowEmptySearch(true);
-    } else {
-      setShowEmptySearch(false);
-    }
-  }, [paginatedData]);
 
   useEffect(() => {
     if (!showFilterComponent) {
@@ -209,17 +192,17 @@ const SuperTable = ({
 
   useEffect(() => {
     if (showAllData) {
-      setEntriesToShow(employeesData.length); // Affichez toutes les données
+      // setEntriesToShow(employeesData.length); // Affichez toutes les données
+      setEntriesToShow(data.length); // Affichez toutes les données
     } else {
       setEntriesToShow(10); // Ou toute autre valeur par défaut que vous souhaitez utiliser
     }
-  }, [employeesData, showAllData]);
-  
+  // }, [employeesData, showAllData]);
+  }, [data, showAllData]);
 
   return (
     <div className="app-container">
       <div className="employees-header">
-        {/* <h2>Table Library</h2> */}
         <div className="show-search">
           {showFilterComponent && (
             <FilterEntries
@@ -242,13 +225,16 @@ const SuperTable = ({
       <table className="employees-table">
         <thead>
           <tr>
-            {columns.map((column) => (
+            {/* {columns.map((column) => ( */}
+            {customColumnsTable.map((column) => (
               <TableHeader
-                key={column.key}
+                // key={column.key}
+                key={column.key || Math.random()} // Si la clé est vide, nous générons un identifiant aléatoire. Ceci évitera des problèmes avec React.
                 column={column}
                 sortBy={sortBy}
                 sortOrder={sortOrder}
-                onClick={() => handleColumnClick(column.key)} // Ici, on passe le nom de la colonne
+                // onClick={() => handleColumnClick(column.key)} // Ici, on passe le nom de la colonne
+                onClick={column.key ? () => handleColumnClick(column.key) : undefined} // Pas de gestionnaire de clic si la clé est vide
               />
             ))}
           </tr>
@@ -260,39 +246,36 @@ const SuperTable = ({
               employee={employee}
               sortBy={sortBy}
               className={index % 2 === 0 ? "table-row-even" : "table-row-odd"}
+              customColumnsTable={customColumnsTable} // Passer le tableau customColumnsTable en tant que prop
             />
           ))}
         </tbody>
       </table>
 
-      {showEmptySearch && (
+      {searchPerformed && paginatedData.length === 0 ? (
         <div className="error-message">
           <p>No results found for your search.</p>
         </div>
+      ) : (
+        <div className="flex-pagination">
+          {localShowEntriesListComponent && (
+            <EntriesInfo
+              currentPage={currentPage}
+              entriesToShow={entriesToShow}
+              totalEntries={totalEntries}
+            />
+          )}
+          {localShowPaginationComponent && (
+            <Pagination
+              handlePageClick={handlePageClick}
+              handlePreviousPage={handlePreviousPage}
+              handleNextPage={handleNextPage}
+              pageNumbers={pageNumbers}
+              currentPage={currentPage}
+            />
+          )}
+        </div>
       )}
-
-      <div className="flex-pagination">
-      {localShowEntriesListComponent && (
-          <EntriesInfo
-            currentPage={currentPage}
-            entriesToShow={entriesToShow}
-            totalEntries={totalEntries}
-          />
-        )}
-
-{localShowPaginationComponent && (
-          <Pagination
-            handlePageClick={handlePageClick}
-            handlePreviousPage={handlePreviousPage}
-            handleNextPage={handleNextPage}
-            pageNumbers={pageNumbers}
-            currentPage={currentPage}
-          />
-        )}
-      </div>
-      {/* <div className="link-employee">
-        <Link to="/employees/create">Create Employee</Link>
-      </div> */}
     </div>
   );
 };

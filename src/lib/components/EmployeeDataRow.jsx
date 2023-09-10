@@ -1,22 +1,20 @@
 import React from 'react';
 
-const EmployeeDataRow = ({ employee, sortBy, className }) => {
-    const employeeEntries = Object.entries(employee);
+const EmployeeDataRow = ({ employee, sortBy, className, customColumnsTable }) => (
+    <tr className={className}>
+        {customColumnsTable.map(column => {
+            const { key } = column;
 
-    return (
-        <tr className={className}>
-            {employeeEntries.map(([key, value]) => {
-                if (key !== "id") {
-                    return (
-                        <td key={key} className={sortBy === key ? "sorted-column" : ""}>
-                            {value}
-                        </td>
-                    );
-                }
-                return null; // Return null for the 'id' key, so it doesn't get rendered
-            })}
-        </tr>
-    );
-};
+            if (!key) return <td key={`empty_${Math.random()}`} className="empty-column"></td>;
+            if (key === "id") return null;
+            
+            return (
+                <td key={key} className={sortBy === key ? "sorted-column" : ""}>
+                    {employee[key]}
+                </td>
+            );
+        })}
+    </tr>
+);
 
 export default EmployeeDataRow;
