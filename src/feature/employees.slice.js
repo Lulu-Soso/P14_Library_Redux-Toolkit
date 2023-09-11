@@ -39,6 +39,10 @@ const employeesSlice = createSlice({
       localStorage.setItem("employeeInfo", JSON.stringify(payload));
       localStorage.setItem("employees", JSON.stringify(state.employeesData));
     },
+    updateEmployee: (state, {payload}) => {
+      state.employeesData = state.employeesData.map(employee => employee.id === payload.id ? payload : employee)
+      localStorage.setItem("employees", JSON.stringify(state.employeesData))
+    },
     setError: (state, { payload }) => {
       state.error = payload;
     },
@@ -78,5 +82,6 @@ export const {
   setCurrentPage,
   setEntriesToShow,
   setSearch,
+  updateEmployee
 } = employeesSlice.actions;
 export default employeesSlice.reducer;

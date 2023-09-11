@@ -5,7 +5,7 @@ const EmployeeDataRow = ({
   item,
   sortBy,
   className,
-  customColumnsTable,
+  columnsTable,
   readComponent,
   editComponent,
   deleteComponent,
@@ -14,7 +14,7 @@ const EmployeeDataRow = ({
   handleRead
 }) => (
   <tr className={className}>
-    {customColumnsTable.map((column) => {
+    {columnsTable.map((column) => {
       const { key } = column;
 
       if (!key)

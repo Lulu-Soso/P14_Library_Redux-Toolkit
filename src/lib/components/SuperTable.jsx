@@ -7,25 +7,28 @@ import EntriesInfo from "../components/EntriesInfo";
 import Pagination from "./Pagination";
 import FilterEntries from "../components/FilterEntries";
 import EditForm from "../components/EditForm";
+import ViewItem from "../components/ViewItem.jsx";
+import Modal from "../components/Modal";
+import { isValidPhoneNumber, isValidEmail } from "../utils/validations";
 
 // *** CONSTANTS ***
-const columnsTable = [
-  { key: "id", label: "id" },
-  { key: "firstName", label: "First Name" },
-  { key: "lastName", label: "Last Name" },
-  { key: "email", label: "Email" },
-  { key: "numberPhone", label: "Number Phone" },
-  { key: "dateOfBirth", label: "Date of Birth" },
-  { key: "address", label: "Address" },
-  { key: "zipCode", label: "Zip Code" },
+const columnsTableDefault = [
+  { key: "id", label: "id", type: "number" },
+  { key: "firstName", label: "First Name", type: "text" },
+  { key: "lastName", label: "Last Name", type: "textarea" },
+  { key: "email", label: "Email", type: "email" },
+  { key: "phoneNumber", label: "Phone Number", type: "tel" },
+  { key: "dateOfBirth", label: "Date of Birth", type: "date" },
+  { key: "address", label: "Address", type: "text" },
+  { key: "zipCode", label: "Zip Code", type: "number" },
   { key: "", label: "" },
-  { key: "country", label: "Country" },
+  { key: "country", label: "Country", type: "textarea" },
   { key: "/Options-Actions/", label: "Actions" },
 ];
 
 const SuperTable = ({
   data = testData,
-  customColumnsTable = columnsTable,
+  columnsTable = columnsTableDefault,
   showFilterComponent = false,
   showSearchComponent = false,
   // showEntriesListComponent = false,
@@ -39,8 +42,11 @@ const SuperTable = ({
   deleteComponent = false,
   customHandleRead,
   customHandleEdit,
+  customHandleShowList,
   customHandleDelete,
-  saveEditedItem, 
+  customHandleSaveEditForm,
+  // saveEditedItem,
+  // handleSave,
   // closeEditForm,
 }) => {
   // *** STATES ***
@@ -51,6 +57,11 @@ const SuperTable = ({
   const [searchValue, setSearchValue] = useState("");
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [viewingItem, setViewingItem] = useState(null);
+  const [item, setItem] = useState({});
+  const [editedItem, setEditedItem] = useState({});
+  const [isActiveModal, setIsActiveModal] = useState(false);
+  // const [viewedItem, setViewedItem] = useState(null);
   // const [isEditing, setIsEditing] = useState(false);
 
   const [localShowEntriesListComponent, setLocalShowEntriesListComponent] =
@@ -58,44 +69,89 @@ const SuperTable = ({
   const [localShowPaginationComponent, setLocalShowPaginationComponent] =
     useState(showPaginationProp);
 
+  ///////
+  // const handleRead = (item) => {
+  //   if (customHandleRead) {
+  //     customHandleDelete(item.id);
+  //   } else {
+  //     console.log(`Reading item with ID: ${item.id}`);
+  //   }
+  // };
 
-    ///////
-    const handleRead = (item) => {
-      if (customHandleRead) {
-        customHandleDelete(item.id);
-      } else {
-        console.log(`Reading item with ID: ${item.id}`);
-      }
-    };
+  const handleEdit = (item) => {
+    if (customHandleEdit) {
+      customHandleEdit(item.id);
+    } else {
+      console.log("Editing item with ID:", item.id);
+      setEditingItem(item.id);
+      setItem({ ...item });
+      setEditedItem({ ...item });
+      setIsActiveModal(true);
+    }
+    // setIsEditing(true);
+    // setIsSearchValue(true)
+  };
 
-    const handleEdit = (item) => {
-      if (customHandleEdit) {
-        customHandleEdit(item.id);
-      } else {
-        console.log("Editing item with ID:", item.id);
-        setEditingItem(item.id);
-        // setEditedItem({ ...item });
-      }
-      // setIsEditing(true);
-      // setIsSearchValue(true)
+  const handleRead = (item) => {
+    if (customHandleRead) {
+      customHandleRead(item.id);
+    } else {
+      console.log("Showing item with ID:", item.id);
+      setViewingItem(item);
+      setIsActiveModal(true);
+    }
+  };
   
-    };
 
-    const handleDelete = (item) => {
-      if (customHandleDelete) {
-        customHandleDelete(item.id);
-      } else {
-        console.log(`Deleting item with ID: ${item.id}`);
-      }
-    };
+  const handleDelete = (item) => {
+    if (customHandleDelete) {
+      customHandleDelete(item.id);
+    } else {
+      console.log(`Deleting item with ID: ${item.id}`);
+    }
+  };
 
-    const closeEditForm = () => {
+  const closeEditForm = () => {
+    setEditingItem(null);
+    // setIsEditing(false); // Réactivez le mode édition lors de la fermeture de la fenêtre modale
+    // setSearchValue("")
+    // setIsSearchValue(null)
+  };
+
+  // const closeViewItem = () => {
+  //   setEditingItem(null);
+  // };
+
+  const closeEditModal = () => {
+    setEditingItem(null);
+    setViewingItem(null);
+    // setIsEditing(false); // Réactivez le mode édition lors de la fermeture de la fenêtre modale
+    // setSearchValue("")
+    // setIsSearchValue(null)
+  };
+
+  const handleSaveEditForm = () => {
+    if (customHandleSaveEditForm) {
+      customHandleSaveEditForm(item);
+    } else {
+      // Réinitialiser l'état de l'employé en cours d'édition
       setEditingItem(null);
-      // setIsEditing(false); // Réactivez le mode édition lors de la fermeture de la fenêtre modale
-      // setSearchValue("")
-      // setIsSearchValue(null)
-    };
-    ///////
+      setEditedItem({});
+    }
+    // setIsEditing(true); // Réactivez le mode édition
+    closeEditModal();
+  };
+
+  const handleFieldChange = (fieldName, value) => {
+    value = value.trim();
+
+    setEditedItem((prevData) => ({
+      ...prevData,
+      [fieldName]: value,
+    }));
+  };
+
+  ///////
 
   // *** SORTING LOGIC ***
   const toggleSortOrder = () => {
@@ -255,7 +311,37 @@ const SuperTable = ({
   return (
     <div className="app-container">
       {editingItem && (
-        <EditForm closeEditForm={closeEditForm}/>
+        <Modal
+          isActiveModal={
+            isActiveModal /* ou utilisez une variable d'état pour gérer l'activation */
+          }
+          closeModal={closeEditModal}
+        >
+          <EditForm
+            closeEditForm={closeEditForm}
+            handleSaveEditForm={handleSaveEditForm}
+            editedItem={editedItem}
+            handleFieldChange={handleFieldChange}
+            isValidEmail={isValidEmail}
+            isValidPhoneNumber={isValidPhoneNumber}
+            columnsTable={columnsTable}
+          />
+        </Modal>
+      )}
+
+      {viewingItem && (
+        <Modal
+          isActiveModal={
+            isActiveModal /* ou utilisez une variable d'état pour gérer l'activation */
+          }
+          closeModal={closeEditModal}
+        >
+          <ViewItem
+          item={viewingItem}
+          columnsTable={columnsTable}
+          // closeViewItem={closeViewItem}
+          />
+        </Modal>
       )}
 
       <div className="employees-header">
@@ -282,7 +368,7 @@ const SuperTable = ({
         <thead>
           <tr>
             {/* {columns.map((column) => ( */}
-            {customColumnsTable.map((column) => (
+            {columnsTable.map((column) => (
               <TableHeader
                 // key={column.key}
                 key={column.key || Math.random()} // Si la clé est vide, nous générons un identifiant aléatoire. Ceci évitera des problèmes avec React.
@@ -304,7 +390,7 @@ const SuperTable = ({
               item={item}
               sortBy={sortBy}
               className={index % 2 === 0 ? "table-row-even" : "table-row-odd"}
-              customColumnsTable={customColumnsTable} // Passer le tableau customColumnsTable en tant que prop
+              columnsTable={columnsTable} // Passer le tableau customColumnsTable en tant que prop
               readComponent={readComponent}
               editComponent={editComponent}
               deleteComponent={deleteComponent}

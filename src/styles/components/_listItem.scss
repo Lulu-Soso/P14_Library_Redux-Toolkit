@@ -1,0 +1,35 @@
+.itemDetail {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    width: 100%; /* Valeur par défaut */
+  }
+  
+  .itemDetail > .key-item {
+    font-weight: bold;
+    flex: 1;
+    text-align: right;
+  }
+  
+  .itemDetail > .value-item {
+    flex: 2;
+    text-align: left;
+    padding-left: 20px;
+  }
+  
+  /* Pour les tablettes */
+  @media (max-width: 768px) {
+    .itemDetail {
+      width: 100%; /* 70% de la largeur de la tablette */
+      margin: 0 auto; /* centrage horizontal */
+    }
+  }
+  
+  /* Pour les mobiles */
+  @media (max-width: 480px) {
+    .itemDetail {
+      width: 100%; /* 90% de la largeur du mobile */
+      margin: 0 auto; /* centrage horizontal */
+    }
+  }
+  

@@ -1,0 +1,76 @@
+.modal {
+  position: fixed;
+  top: -100%; /* Initial position */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: top 0.3s ease-in-out; /* Transition for smooth animation */
+  z-index: 10;
+}
+
+.modal.active {
+  top: 0; /* Final position for active state */
+}
+
+.modal-content {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  width: 40%;
+  animation: slideInFromTop 0.5s ease-in-out;
+
+  .close-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: fit-content;
+    
+    button {
+      background-color: #5a6f08;
+      color: #ffffff;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 1.5em;
+    }
+  }
+}
+
+.children-content {
+  background-color: white;
+  padding: 1rem;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Styles responsives */
+@media screen and (max-width: 768px) { /* Ajustements pour tablettes */
+  .modal-content {
+    width: 70%; /* Augmente la largeur pour tablettes */
+  }
+}
+
+@media screen and (max-width: 480px) { /* Ajustements pour mobiles */
+  .modal-content {
+    width: 90%; /* Augmente la largeur pour mobiles */
+    
+    .close-button button {
+      width: 30px;
+      height: 30px;
+      font-size: 1.2em; /* Diminution de la taille du bouton close */
+    }
+  }
+
+  .children-content {
+    padding: 0.5rem; /* Diminution du padding pour mobiles */
+  }
+}
