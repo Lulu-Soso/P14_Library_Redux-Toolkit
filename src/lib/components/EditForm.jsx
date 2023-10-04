@@ -30,13 +30,13 @@ const EditForm = ({
                       handleFieldChange(column.key, e.target.value)
                     }
                   />
-                  ) : column.type === "textarea" ? (
-                    <textarea
-                      value={editedItem[column.key] || ""}
-                      onChange={(e) =>
-                        handleFieldChange(column.key, e.target.value)
-                      }
-                    ></textarea>
+                ) : column.type === "textarea" ? (
+                  <textarea
+                    value={editedItem[column.key] || ""}
+                    onChange={(e) =>
+                      handleFieldChange(column.key, e.target.value)
+                    }
+                  ></textarea>
                 ) : column.type === "date" ? (
                   <input
                     type="date"
@@ -76,10 +76,22 @@ const EditForm = ({
                 )}
             </div>
           ))}
-        <button type="button" className="btn-edit-form" onClick={handleSaveEditForm}>
-          Save
-        </button>
-        <button type="button" className="btn-edit-form" onClick={closeEditForm}>Cancel</button>
+        <div className="buttons-container">
+          <button
+            type="button"
+            className="btn-edit-form"
+            onClick={handleSaveEditForm}
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            className="btn-edit-form"
+            onClick={closeEditForm}
+          >
+            Cancel
+          </button>
+        </div>
       </form>
     </>
   );

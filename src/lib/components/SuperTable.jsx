@@ -69,15 +69,6 @@ const SuperTable = ({
   const [localShowPaginationComponent, setLocalShowPaginationComponent] =
     useState(showPaginationProp);
 
-  ///////
-  // const handleRead = (item) => {
-  //   if (customHandleRead) {
-  //     customHandleDelete(item.id);
-  //   } else {
-  //     console.log(`Reading item with ID: ${item.id}`);
-  //   }
-  // };
-
   const handleEdit = (item) => {
     if (customHandleEdit) {
       customHandleEdit(item.id);
@@ -86,10 +77,9 @@ const SuperTable = ({
       setEditingItem(item.id);
       setItem({ ...item });
       setEditedItem({ ...item });
+      setViewingItem(null);
       setIsActiveModal(true);
     }
-    // setIsEditing(true);
-    // setIsSearchValue(true)
   };
 
   const handleRead = (item) => {
@@ -98,6 +88,7 @@ const SuperTable = ({
     } else {
       console.log("Showing item with ID:", item.id);
       setViewingItem(item);
+      setEditingItem(null);
       setIsActiveModal(true);
     }
   };
@@ -113,27 +104,18 @@ const SuperTable = ({
 
   const closeEditForm = () => {
     setEditingItem(null);
-    // setIsEditing(false); // Réactivez le mode édition lors de la fermeture de la fenêtre modale
-    // setSearchValue("")
-    // setIsSearchValue(null)
   };
-
-  // const closeViewItem = () => {
-  //   setEditingItem(null);
-  // };
 
   const closeEditModal = () => {
     setEditingItem(null);
     setViewingItem(null);
-    // setIsEditing(false); // Réactivez le mode édition lors de la fermeture de la fenêtre modale
-    // setSearchValue("")
-    // setIsSearchValue(null)
   };
 
   const handleSaveEditForm = () => {
     if (customHandleSaveEditForm) {
-      customHandleSaveEditForm(item);
+      customHandleSaveEditForm(editedItem);
     } else {
+      console.log("save me:");
       // Réinitialiser l'état de l'employé en cours d'édition
       setEditingItem(null);
       setEditedItem({});
@@ -309,7 +291,8 @@ const SuperTable = ({
   }, [data, showAllData]);
 
   return (
-    <div className="app-container">
+    // <div className="app-container">
+    <>
       {editingItem && (
         <Modal
           isActiveModal={
@@ -426,7 +409,7 @@ const SuperTable = ({
           )}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

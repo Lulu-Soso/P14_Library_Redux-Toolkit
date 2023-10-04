@@ -25,6 +25,8 @@ const columns = [
   { key: "state", label: "State" },
   { key: "zipCode", label: "Zip Code" },
   { key: "department", label: "Department" },
+  // { key: "createdAt", label: "Created At" },
+  // { key: "/Options-Actions/", label: "Actions" },
 ];
 
 const EmployeesListPage = () => {
@@ -37,6 +39,7 @@ const EmployeesListPage = () => {
   const [searchValue, setSearchValue] = useState("");
 
   const employeesData = useSelector((state) => state.employees.employeesData);
+  console.log(employeesData);
   const dispatch = useDispatch();
 
   // *** DATA FETCHING ***
@@ -44,6 +47,7 @@ const EmployeesListPage = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get("http://localhost:5000/employees");
+        console.log(response.data);
         dispatch(setEmployeesData(response.data));
       } catch (error) {
         console.error("An error occurred while fetching data:", error);
@@ -148,15 +152,32 @@ const EmployeesListPage = () => {
     .filter((employee) => {
       if (!searchValue) return true;
       return (
-        employee.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.lastName.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.birthDate.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.startDate.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.street.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.city.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.state.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.zipCode.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.department.toLowerCase().includes(searchValue.toLowerCase())
+        (employee.firstName
+          ?.toLowerCase()
+          .includes(searchValue.toLowerCase()) ??
+          false) ||
+        (employee.lastName?.toLowerCase().includes(searchValue.toLowerCase()) ??
+          false) ||
+        (employee.birthDate
+          ?.toLowerCase()
+          .includes(searchValue.toLowerCase()) ??
+          false) ||
+        (employee.startDate
+          ?.toLowerCase()
+          .includes(searchValue.toLowerCase()) ??
+          false) ||
+        (employee.street?.toLowerCase().includes(searchValue.toLowerCase()) ??
+          false) ||
+        (employee.city?.toLowerCase().includes(searchValue.toLowerCase()) ??
+          false) ||
+        (employee.state?.toLowerCase().includes(searchValue.toLowerCase()) ??
+          false) ||
+        (employee.zipCode?.toLowerCase().includes(searchValue.toLowerCase()) ??
+          false) ||
+        (employee.department
+          ?.toLowerCase()
+          .includes(searchValue.toLowerCase()) ??
+          false)
       );
     })
     .slice((currentPage - 1) * entriesToShow, currentPage * entriesToShow);

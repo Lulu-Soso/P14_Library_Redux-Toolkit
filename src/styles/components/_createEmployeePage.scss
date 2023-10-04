@@ -66,7 +66,7 @@
     color: white;
     text-align: center;
     padding: 10px;
-    z-index: 1000; /* Assurez-vous que la fenêtre modale soit au-dessus de tout le reste */
+    z-index: 1000;
     display: none; /* Cachée par défaut */
 
     &.active {
@@ -77,6 +77,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      margin: auto;
 
       button {
         margin-left: 1rem;

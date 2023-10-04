@@ -35,7 +35,7 @@ const CreateEmployeePage = () => {
       state,
       zipCode,
       department,
-      createdAt: new Date().toISOString() // date de création
+      // createdAt: new Date().toISOString() // date de création
     };
 
     const resetFormFields = () => {

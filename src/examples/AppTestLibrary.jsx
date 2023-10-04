@@ -5,27 +5,30 @@ import {
   setEmployeesData,
   setError,
   updateEmployee,
+  deleteEmployee
 } from "../feature/employees.slice";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 // *** CONSTANTS ***
 const columnsTable = [
-  { key: "firstName", label: "First Name" },
-  { key: "lastName", label: "Last Name" },
-  { key: "birthDate", label: "Date of Birth" },
-  { key: "startDate", label: "Start Date" },
-  { key: "street", label: "Street" },
-  { key: "city", label: "City" },
-  { key: "state", label: "State" },
-  { key: "zipCode", label: "Zip Code" },
-  { key: "department", label: "Department" },
+  // { key: "id", label: "id", type: "number"},
+  { key: "firstName", label: "First Name", type: "text"},
+  { key: "lastName", label: "Last Name", type: "text" },
+  { key: "birthDate", label: "Date of Birth", type: "date" },
+  { key: "startDate", label: "Start Date", type: "date" },
+  { key: "street", label: "Street", type: "text" },
+  { key: "city", label: "City", type: "text" },
+  { key: "state", label: "State", type: "text" },
+  { key: "zipCode", label: "Zip Code", type: "number" },
+  { key: "department", label: "Department", type: "text"},
+  // { key: "createAt", label: "Create At", type: "text"},
   { key: "/Options-Actions/", label: "Actions" },
 ];
 
 const AppTestLibrary = () => {
-  const customLabelFilter = "Show";
-  const customLabelSearch = "Search";
+  const customLabelFilter = "Filter and Display Pages";
+  const customLabelSearch = "Search Filter";
 
   const employeesData = useSelector((state) => state.employees.employeesData);
   const dispatch = useDispatch();
@@ -35,6 +38,7 @@ const AppTestLibrary = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get("http://localhost:5000/employees");
+        console.log(response.data);
         dispatch(setEmployeesData(response.data));
       } catch (error) {
         console.error("An error occurred while fetching data:", error);
@@ -55,20 +59,37 @@ const AppTestLibrary = () => {
       );
 
       console.log("Edit response:", response.data);
-      dispatch(updateEmployee(item));
+      dispatch(updateEmployee(response.data));
+    //   dispatch(setEmployeesData(response.data));
       //   dispatch({ type: "SET_FORM_DATA", payload: response.data });
     } catch (error) {
       console.error("An error occurred while editing employee:", error);
     }
   };
 
+  const customHandleDelete = async (employeeId) => {
+    try {
+      console.log("Deleting employee with ID:", employeeId);
+
+      const response = await axios.delete(
+        `http://localhost:5000/employees/${employeeId}`
+      );
+
+      console.log("Delete response:", response.data);
+    //   localStorage.setItem("employeesData", JSON.stringify(response.data));
+      dispatch(deleteEmployee(employeeId));
+    } catch (error) {
+      console.error("An error occurred while deleting employee:", error);
+    }
+  };
+
   return (
     <div className="app-container">
-      <h1>Table Library</h1>
+      {/* <h1>Table Library</h1> */}
 
       <SuperTable
-        // data={employeesData}
-        // columnsTable={columnsTable}
+        data={employeesData}
+        columnsTable={columnsTable}
         showFilterComponent={true}
         showSearchComponent={true}
         showEntriesListComponent={true}
@@ -81,7 +102,7 @@ const AppTestLibrary = () => {
         customHandleSaveEditForm={customHandleSaveEditForm}
         // customHandleRead={customHandleRead}
         // customHandleEdit={customHandleEdit}
-        // customHandleDelete={customHandleDelete}
+        customHandleDelete={customHandleDelete}
       />
 
       <div className="link-employee">

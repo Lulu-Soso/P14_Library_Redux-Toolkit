@@ -23,14 +23,16 @@
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-  width: 40%;
+  width: 45%;
   animation: slideInFromTop 0.5s ease-in-out;
+  color: #000;
 
   .close-button {
     display: flex;
     justify-content: center;
     align-items: center;
     height: fit-content;
+    position: absolute;
     
     button {
       background-color: #5a6f08;
@@ -39,6 +41,10 @@
       height: 40px;
       border-radius: 50%;
       font-size: 1.5em;
+
+      &:hover {
+        background-color: #93ad18;
+      }     
     }
   }
 }
@@ -47,9 +53,27 @@
   background-color: white;
   padding: 1rem;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-  width: 90%;
+  width: 80%;
   max-height: 80vh;
   overflow-y: auto;
+  margin: auto;
+
+  .buttons-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+
+    button {
+      width: 50%;
+      margin: 0;
+      background-color: #5a6f08;
+      height: 30px;
+
+      &:hover {
+        background-color: #93ad18;
+      }
+    }
+  }
 }
 
 /* Styles responsives */
